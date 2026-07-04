@@ -1,0 +1,30 @@
+.fade-t {
+  /* 初期状態の設定 */
+  opacity: 0;                /* 透明にする */
+  transform: translateY(-50px); /* 左に50pxずらしておく */
+  
+  /* アニメーションの指定（名前・時間・動き方） */
+  animation: fadeInMove 1s ease-out forwards;
+}
+
+/* アニメーションの動きを定義 */
+@keyframes fadeInMove {
+  to {
+    opacity: 1;              /* 透明度を1に戻す */
+    transform: translateY(0); /* 元の位置（0）に戻す */
+  }
+}
+
+.text-area {
+  width: 300px;
+  height: 200px;
+  border: 1px solid #7dbd41;
+  
+  /* Flexboxを有効化 */
+  display: flex;
+  flex-direction: column; /* 上から下へ並べる */
+  justify-content: flex-start; /* 最初（上）から詰めて配置する */
+  overflow-y: auto; /* 文章が増えすぎたらスクロールできるようにする */ 
+
+  
+}
