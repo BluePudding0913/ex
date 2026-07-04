@@ -10,19 +10,26 @@ fetch('texts.json')
 // ボタンクリック時の処理
 document.getElementById('go').addEventListener('click', () => {
   if (currentIndex < messages.length) {
-    //3いったらテキスト削除
-    if (currentIndex > 3) {
-      const container = document.getElementById('text-area');
+    const container = document.getElementById('text-area');
+    
+    //表示するメッセージが３つ以上なら、最初のメッセージを削除する
+    if (currentIndex > 1) {
       container.removeChild(container.firstChild);
     }
 
-    const container = document.getElementById('text-area');
-    const newText = document.createElement('a'); // 新しい段落を作る
-    newText.classList.add('fade-t'); // CSSクラスを追加
-    newText.classList.add('txt'); // テキストのスタイルを追加
-    newText.textContent = messages[currentIndex]; // テキストを代入
-    container.appendChild(newText); // 画面に追加
-    currentIndex++; // 次のインデックスへ
+
+
+    // ★ 'a' や 'div' ではなく 'span' にする
+    const newText = document.createElement('span'); 
+    
+    newText.classList.add('fade-t'); 
+    newText.classList.add('txt'); 
+    
+    // 句点の後などに少し隙間が欲しい場合はスペースを足すのもアリです
+    newText.textContent = messages[currentIndex] + " "; 
+    
+    container.appendChild(newText); 
+    currentIndex++; 
   } else {
     alert('すべてのメッセージを表示しました！');
   }
