@@ -1,4 +1,5 @@
 {
-  "initial": ["sub","bad_end_1"],
-  "sub": ["initial","bad_end_1"]
+  "initial": ["find_memo", "ignore_gun"],
+  "find_memo": ["remember", "flee"],
+  "remember": ["kidnap", "protect"]
 }

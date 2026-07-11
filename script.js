@@ -1,11 +1,15 @@
-let chartData, nameOfMainStory, messages, currentIndex = 0;
+let chartData, nameOfMainStory, messages, choices, currentIndex = 0;
 const container = document.getElementById('text-area');
 const btnYes = document.getElementById('yes');
 const btnNo = document.getElementById('no');
 
 async function loadStory(storyName) {
   const response = await fetch(`story/${storyName}.json`);
-  messages = (await response.json()).messages;
+  const data = await response.json();
+  
+  messages = data.messages;
+  choices = data.choices || null; // choices配列を取得（エンディングなど存在しない場合を考慮してnullフォールバック）
+  
   currentIndex = 0;
   container.replaceChildren();
   
@@ -41,6 +45,12 @@ container.addEventListener('click', () => {
   } else {
     //ボタン表示
     if(chartData[nameOfMainStory]) {
+      // jsonにchoicesが設定されていればボタンのテキストを上書きする
+      if (choices && choices.length >= 2) {
+        btnYes.textContent = choices[0].text;
+        btnNo.textContent = choices[1].text;
+      }
+      
       btnYes.style.display = 'inline-block';
       btnNo.style.display = 'inline-block';
     }
