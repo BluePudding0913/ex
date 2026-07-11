@@ -1,56 +1,61 @@
-let chartData = null;
-let nameOfMainStory = "";
-let messages = [];
-let currentIndex = 0;
+let chartData, nameOfMainStory, messages, currentIndex = 0;
+const container = document.getElementById('text-area');
+const btnYes = document.getElementById('yes');
+const btnNo = document.getElementById('no');
+
+async function loadStory(storyName) {
+  const response = await fetch(`story/${storyName}.json`);
+  messages = (await response.json()).messages;
+  currentIndex = 0;
+  container.replaceChildren();
+  
+  //ボタン隠す
+  btnYes.style.display = 'none';
+  btnNo.style.display = 'none';
+}
 
 async function initStory() {
-  try {
-    const chartRes = await fetch('chart.json');
-    chartData = await chartRes.json();
-    const keys = Object.keys(chartData);
-    nameOfMainStory = keys[0];
-    const storyRes = await fetch(`story/${nameOfMainStory}.json`);
-    const storyData = await storyRes.json();
-    messages = storyData.messages;
-    
-  } catch (error) {
-    console.error("データの読み込みに失敗しました: ", error);
-  }
+  const chartRes = await fetch('chart.json');
+  chartData = await chartRes.json();
+  
+  nameOfMainStory = Object.keys(chartData)[0];
+  loadStory(nameOfMainStory);
 }
 
 initStory();
 
-// ボタンクリック時の処理
-document.getElementById('text-area').addEventListener('click', async () => {
-  if (messages.length === 0) return;
-
+// テキストエリアクリック時の処理
+container.addEventListener('click', () => {
   if (currentIndex < messages.length) {
-    let flg = false;
-    if (messages[currentIndex] === "_")flg = true;
+    let flg = messages[currentIndex] === "_";
     
-    const container = document.getElementById('text-area');
-    if (currentIndex > 0 && !flg)container.replaceChildren();
+    if (currentIndex > 0 && !flg) container.replaceChildren();
+    if (flg) currentIndex++;
 
-    if (flg)currentIndex++;
     const newText = document.createElement('span'); 
     newText.classList.add('fade-t', 'txt'); 
     newText.textContent = messages[currentIndex];
     container.appendChild(newText);
     
     currentIndex++; 
-
   } else {
-    const nextStoryName = chartData[nameOfMainStory][0]; 
-    if (!nextStoryName)return; // 次のストーリーが存在しない場合は終了
-    try {
-      const response = await fetch(`story/${nextStoryName}.json`);
-      const data = await response.json();
-      messages = data.messages;
-      currentIndex = 0;
-      nameOfMainStory = nextStoryName;
-      document.getElementById('text-area').replaceChildren();
-    } catch (error) {
-      console.error("次のストーリーの読み込みに失敗しました: ", error);
+    //ボタン表示
+    if(chartData[nameOfMainStory]) {
+      btnYes.style.display = 'inline-block';
+      btnNo.style.display = 'inline-block';
     }
+    
   }
+});
+
+//[0] のストーリーへ
+btnYes.addEventListener('click', () => {
+  nameOfMainStory = chartData[nameOfMainStory][0];
+  loadStory(nameOfMainStory);
+});
+
+//[1] のストーリーへ
+btnNo.addEventListener('click', () => {
+  nameOfMainStory = chartData[nameOfMainStory][1];
+  loadStory(nameOfMainStory);
 });
