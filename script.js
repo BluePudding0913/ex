@@ -1,29 +1,56 @@
-let messages = []; // JSONの内容を保持する変数
-let currentIndex = 0; // 現在何番目か
-// JSONデータを読み込む
-fetch('texts.json')
-  .then(response => response.json())
-  .then(data => {
-    messages = data.messages;
-  });
+let chartData = null;
+let nameOfMainStory = "";
+let messages = [];
+let currentIndex = 0;
+
+async function initStory() {
+  try {
+    const chartRes = await fetch('chart.json');
+    chartData = await chartRes.json();
+    const keys = Object.keys(chartData);
+    nameOfMainStory = keys[0];
+    const storyRes = await fetch(`story/${nameOfMainStory}.json`);
+    const storyData = await storyRes.json();
+    messages = storyData.messages;
+    
+  } catch (error) {
+    console.error("データの読み込みに失敗しました: ", error);
+  }
+}
+
+initStory();
 
 // ボタンクリック時の処理
-document.getElementById('go').addEventListener('click', () => {
+document.getElementById('text-area').addEventListener('click', async () => {
+  if (messages.length === 0) return;
+
   if (currentIndex < messages.length) {
     let flg = false;
-    if((messages[currentIndex]=="_"))flg = true;
+    if (messages[currentIndex] === "_")flg = true;
+    
     const container = document.getElementById('text-area');
-    //メッセージを削除する
     if (currentIndex > 0 && !flg)container.replaceChildren();
 
-    if(flg)currentIndex++;
+    if (flg)currentIndex++;
     const newText = document.createElement('span'); 
-    newText.classList.add('fade-t'); 
-    newText.classList.add('txt'); 
+    newText.classList.add('fade-t', 'txt'); 
     newText.textContent = messages[currentIndex];
     container.appendChild(newText);
+    
     currentIndex++; 
+
   } else {
-    alert('すべてのメッセージを表示しました！');
+    const nextStoryName = chartData[nameOfMainStory][0]; 
+    if (!nextStoryName)return; // 次のストーリーが存在しない場合は終了
+    try {
+      const response = await fetch(`story/${nextStoryName}.json`);
+      const data = await response.json();
+      messages = data.messages;
+      currentIndex = 0;
+      nameOfMainStory = nextStoryName;
+      document.getElementById('text-area').replaceChildren();
+    } catch (error) {
+      console.error("次のストーリーの読み込みに失敗しました: ", error);
+    }
   }
 });

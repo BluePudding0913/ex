@@ -1,12 +1,9 @@
+
 .fade-t {
-  /* 初期状態の設定 */
-  opacity: 0;                /* 透明にする */
-  
-  /* アニメーションの指定（名前・時間・動き方） */
+  opacity: 0;
   animation: fadeInMove 1s ease-out forwards;
 }
 
-/* アニメーションの動きを定義 */
 @keyframes fadeInMove {
   to {
     opacity: 1;
@@ -17,19 +14,26 @@
   width: 900px;
   height: 200px;
   border: 1px solid #7dbd41;
-  
-  /* Flexboxの指定はすべて削除 */
-  
-  /* 以下、追加・変更箇所 */
   padding: 10px;
-  word-wrap: break-word;     /* 枠の右端で確実に改行（折り返し）させる */
+  word-wrap: break-word;
   overflow-wrap: break-word;
-  word-break: break-all;     /* 1文の途中でも容赦なく折り返す */
-  
-  line-height: 2.0;          /* 【重要】行間を広く取って均等にしたい場合はここで調整 */
+  word-break: break-all;
+  line-height: 2.0;
 }
 
-/* 追加されるテキスト用クラス（特別な指定は不要ですが念のため） */
 .txt {
-  display: inline; /* 右に連なるようにする（デフォルト） */
+  user-select: none;
+  display: inline;
+}
+
+.switch {
+  width: 80px;
+  height: 30px;
+  border: 1px solid #7dbd41;
+  transform: translateY(10px);
+  transition: all 0.2s ease;
+  user-select: none;
+}.switch:hover {
+  background-color: #7dbd41;
+  color: #ffffff;
 }
