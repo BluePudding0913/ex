@@ -12,7 +12,6 @@ body {
 .image-area {
   max-width: 98%;
   height: auto;
-  margin-bottom: 20px;
 }
 
 .text-area {
@@ -28,6 +27,7 @@ body {
 }
 .txt {
   display: inline;
+  font-size: 20px;
 }
 .fade-t {
   opacity: 0;
