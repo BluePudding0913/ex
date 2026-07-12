@@ -1,5 +1,6 @@
 let chartData, nameOfMainStory, messages, choices, currentIndex = 0;
-const container = document.getElementById('text-area');
+const clickContainer = document.getElementById('image-area');
+const textContainer = document.getElementById('text-area');
 const btnYes = document.getElementById('yes');
 const btnNo = document.getElementById('no');
 
@@ -8,14 +9,15 @@ async function loadStory(storyName) {
   const data = await response.json();
   
   messages = data.messages;
-  choices = data.choices || null; // choices配列を取得（エンディングなど存在しない場合を考慮してnullフォールバック）
+  choices = data.choices || null;
   
   currentIndex = 0;
-  container.replaceChildren();
+  textContainer.replaceChildren();
   
-  //ボタン隠す
-  btnYes.style.display = 'none';
-  btnNo.style.display = 'none';
+  //ボタン隠すdisplay: none
+  btnYes.style.display = "none";
+  btnNo.style.display = "none";
+
 }
 
 async function initStory() {
@@ -23,49 +25,48 @@ async function initStory() {
   chartData = await chartRes.json();
   
   nameOfMainStory = Object.keys(chartData)[0];
-  loadStory(nameOfMainStory);
+  await loadStory(nameOfMainStory);
+  clickContainer.click();
 }
 
 initStory();
 
 // テキストエリアクリック時の処理
-container.addEventListener('click', () => {
+clickContainer.addEventListener('click', () => {
   if (currentIndex < messages.length) {
     let flg = messages[currentIndex] === "_";
     
-    if (currentIndex > 0 && !flg) container.replaceChildren();
+    if (currentIndex > 0 && !flg) textContainer.replaceChildren();
     if (flg) currentIndex++;
 
     const newText = document.createElement('span'); 
     newText.classList.add('fade-t', 'txt'); 
     newText.textContent = messages[currentIndex];
-    container.appendChild(newText);
+    textContainer.appendChild(newText);
     
     currentIndex++; 
-  } else {
-    //ボタン表示
-    if(chartData[nameOfMainStory]) {
-      // jsonにchoicesが設定されていればボタンのテキストを上書きする
-      if (choices && choices.length >= 2) {
-        btnYes.textContent = choices[0].text;
-        btnNo.textContent = choices[1].text;
-      }
-      
-      btnYes.style.display = 'inline-block';
-      btnNo.style.display = 'inline-block';
-    }
-    
   }
+  if(chartData[nameOfMainStory] && currentIndex == messages.length) {
+  // jsonにchoicesが設定されていればボタンのテキストを上書きする
+  if (choices && choices.length >= 2) {
+    btnYes.textContent = choices[0].text;
+    btnNo.textContent = choices[1].text;
+  }
+  btnYes.style.display = "inline-block";
+  btnNo.style.display = "inline-block";
+}
 });
 
-//[0] のストーリーへ
-btnYes.addEventListener('click', () => {
+// [0] のストーリーへ
+btnYes.addEventListener('click', async () => {
   nameOfMainStory = chartData[nameOfMainStory][0];
-  loadStory(nameOfMainStory);
+  await loadStory(nameOfMainStory);
+  clickContainer.click();
 });
 
-//[1] のストーリーへ
-btnNo.addEventListener('click', () => {
+// [1] のストーリーへ
+btnNo.addEventListener('click', async () => {
   nameOfMainStory = chartData[nameOfMainStory][1];
-  loadStory(nameOfMainStory);
+  await loadStory(nameOfMainStory);
+  clickContainer.click();
 });
